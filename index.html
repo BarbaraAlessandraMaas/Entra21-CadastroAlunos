@@ -63,7 +63,7 @@
 
         //Babi
         function cadastrarAluno(index) {
-            
+
         }
 
         //Yasmin
@@ -78,7 +78,37 @@
 
         //Maycon
         function editarInformacoes(matricula) {
-
+            let posicao
+            if (!alunoCadastrado(matricula)) {
+                alert("Aluno não cadastrado!")
+            } else {
+                for (let i = 1; i < 4; i++) {
+                    if (matriz[i][0] == matricula) {
+                        posicao = i
+                    }
+                }
+                while (true) {
+                    let indice = +prompt("Escolha um valor para editar as informações:\n\n1) Número de matrícula;\n2) Nome do aluno;\n3) Notas do aluno;\n0) Sair;")
+                    if (indice == 0) {
+                        break;
+                    } else {
+                        switch (matriz) {
+                            case 1:
+                                matriz[posicao], [0] = +prompt("Digite o número da nova matrícula")
+                                break;
+                            case 2:
+                                matriz[posicao], [1] = prompt("Digite o nome correto")
+                                break;
+                            case 3:
+                                cadastrarNotas(matricula)
+                                break;
+                            default:
+                                alert("O número informado é inválido, escolha outro valor")
+                                break;
+                        }
+                    }
+                }
+            }
         }
 
         //Maria
