@@ -37,7 +37,9 @@
                         break;
                     case 2: //Editar Informações
                         matricula = String(prompt("Informe o número da matrícula para editar as informações:"))
-                        editarInformacoes(matricula, index);
+                        if (editarInformacoes(matricula, index)) {
+                            index++;
+                        }
                         break;
                     case 3: //Cadastrar Notas
                         matricula = String(prompt("Informe o número da matrícula para cadastrar as notas:"))
