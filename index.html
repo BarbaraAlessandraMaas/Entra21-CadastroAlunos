@@ -13,157 +13,233 @@
 
         let matriz = []
 
-        for (let i = 0; i < 4; i++) {
-            matriz[i] = []
-            for (let j = 0; j < 6; j++) {
-                matriz[i][j] = "--"
-            }
-        }
-        matriz[0][0] = "Matrícula"
-        matriz[0][1] = "Nome do Aluno"
-        matriz[0][2] = "1ª Nota"
-        matriz[0][3] = "2ª Nota"
-        matriz[0][4] = "3ª Nota"
-        matriz[0][5] = "Média"
-
         menu();
 
+        /**
+         * Cria o menu. Recebe o índice do usuário e chama a função correspondente.
+         */
         function menu() {
             let matricula
-            let index = 1
+            let index = 0
+
+            encerrarMenuPrincipal:
             while (true) {
                 let indice = +prompt("Escolha um valor para executar o comando:\n\n1) Cadastrar aluno;\n2) Editar informações do aluno;\n3) Cadastrar notas;\n4) Listar alunos;\n0) Sair;")
-                if (indice == 0) {
-                    break;
-                } else {
-                    switch (indice) {
-                        case 1:
-                            cadastrarAluno(index);
-                            index++
-                            break;
-                        case 2:
-                            matricula = String(prompt("Informe o número da matrícula para editar as informações:"))
-                            editarInformacoes(matricula);
-                            break;
-                        case 3:
-                            matricula = String(prompt("Informe o número da matrícula para cadastrar as notas:"))
-                            cadastrarNotas(matricula);
-                            break;
-                        case 4:
-                            listarAlunos();
-                            break;
-                        default:
-                            alert("Número informado é inválido. Digite outro valor!")
-                            break;
-                    }
+
+                switch (indice) {
+                    case 0: //Encerrar Programa
+                        alert("O programa foi encerrado!")
+                        break encerrarMenuPrincipal;
+                    case 1: //Cadastrar Aluno
+                        if (cadastrarAluno(index)) {
+                            index++;
+                        }
+                        break;
+                    case 2: //Editar Informações
+                        matricula = String(prompt("Informe o número da matrícula para editar as informações:"))
+                        editarInformacoes(matricula, index);
+                        break;
+                    case 3: //Cadastrar Notas
+                        matricula = String(prompt("Informe o número da matrícula para cadastrar as notas:"))
+                        if (cadastrarNotas(matricula, index)) {
+                            index++;
+                        }
+                        break;
+                    case 4: //Listar Alunos
+                        console.clear();
+                        listarAlunos(index);
+                        break;
+                    default: //Número Inválido
+                        alert("O número informado é inválido. Digite outro valor!")
+                        break;
                 }
             }
-
         }
 
-        //Babi
+        /**
+         * Cadastra a matrícula e o nome de um aluno na matriz.
+         * 
+         * @param {Number} index - Representa a linha da matriz onde serão armazenadas as informações.
+         */
         function cadastrarAluno(index) {
             let matricula = String(prompt("Cadastro de Aluno:\nInforme o número da matrícula:"))
+
             if (!isNaN(matricula)) {
-                if (alunoCadastrado(matricula)) {
-                    let resultado = confirm(`Já existe um aluno com a matrícula nº ${matricula}, não é possível inserí-lo novamente.\nDeseja editar as informações do aluno?`)
-                    resultado ? editarInformacoes(matricula) : alert(`Os dados do aluno de matrícula nº ${matricula} serão mantidos.\nClique em OK para voltar para o menu!`)
-                    return;
+                if (alunoCadastrado(matricula, index)) {
+                    let resultado = confirm(`O número de matrícula informado já consta no sistema.\nDeseja editar as informações desse aluno?`)
+                    if (resultado) {
+                        editarInformacoes(matricula);
+                    }
+                    return false;
+                } else {
+                    let nome = String(prompt("Cadastro de Aluno:\nInforme o nome do aluno:"))
+                    matriz[index] = []
+                    matriz[index][0] = matricula;
+                    matriz[index][1] = nome;
+
+                    for (let i = 2; i < 6; i++) {
+                        matriz[index][i] = "--"
+                    }
+                    return true;
                 }
-                let nome = String(prompt("Cadastro de Aluno:\nInforme o nome do aluno:"))
-                matriz[index][0] = matricula
-                matriz[index][1] = nome;
-                return;
             } else {
                 alert("Deve ser informado um número válido para a matrícula.\nDigite outro valor!")
                 cadastrarAluno(index);
             }
         }
 
-        //Yasmin
-        function listarAlunos() {
-            let mostrarMatriz = ""
-            for (let i = 0; i < 4; i++) {
-                for (let j = 0; j < 6; j++) {
-                    mostrarMatriz += matriz[i][j] + "\t"
+        /**
+         * Cria um objeto pra cada aluno da matriz e armazena no vetor.
+         * 
+         * @param {Number} index - Quantidade total de alunos armazenados na matriz.
+         */
+        function listarAlunos(index) {
+            let vetor = []
+            for (let i = 0; i < index; i++) {
+                vetor[i] = new aluno(i); //Cria uma instância de aluno.
+            }
+            console.table(vetor);
+        }
+
+        /**
+         * Cria o objeto aluno com suas respectivas características.
+         * 
+         * @param {Number} posicaoAluno - Posição do aluno no vetor.
+         */
+        function aluno(posicaoAluno) {
+            this.Matricula = matriz[posicaoAluno][0]
+            this.Nome_do_Aluno = matriz[posicaoAluno][1]
+            this.Nota_1 = matriz[posicaoAluno][2]
+            this.Nota_2 = matriz[posicaoAluno][3]
+            this.Nota_3 = matriz[posicaoAluno][4]
+            this.Media = matriz[posicaoAluno][5]
+        }
+
+        /**
+         * Verifica se o aluno já está cadastrado no sistema.
+         * 
+         * @param {String} matricula - Matrícula do aluno a ser buscada na matriz.
+         * @param {Number} index - Representa o número de alunos já cadastrados.
+         */
+        function alunoCadastrado(matricula, index) {
+            let flag = false
+
+            for (let i = 0; i < index; i++) {
+                if (matriz[i][0] == matricula) {
+                    flag = true;
                 }
-                mostrarMatriz += "\n"
             }
-            console.table(mostrarMatriz)
+            return flag;
         }
 
-        //Vitor
-        function alunoCadastrado(matricula) {
-            for (let j = 1; j < 4; j++) {
-                matriz[j][0] == matricula ? true : false
-            }
-        }
+        /**
+         * Edita as informações armazenada na matriz, com base no índice informado.
+         * 
+         * @param {String} matricula - Número da matrícula do aluno que terá as informações alteradas.
+         * @param {Number} index - Determina o número de alunos já cadastrados.
+         */
+        function editarInformacoes(matricula, index) {
+            if (alunoCadastrado(matricula, index)) {
+                let posicao
 
-        //Maycon
-        function editarInformacoes(matricula) {
-            let posicao
-            if (!alunoCadastrado(matricula)) {
-                alert("Aluno não cadastrado!")
-            } else {
-                for (let i = 1; i < 4; i++) {
+                for (let i = 0; i < index; i++) {
                     if (matriz[i][0] == matricula) {
                         posicao = i
                     }
                 }
-                while (true) {
-                    let indice = +prompt("Escolha um valor para editar as informações:\n\n1) Número de matrícula;\n2) Nome do aluno;\n3) Notas do aluno;\n0) Sair;")
-                    if (indice == 0) {
-                        break;
-                    } else {
-                        switch (matriz) {
-                            case 1:
-                                matriz[posicao], [0] = +prompt("Digite o número da nova matrícula")
-                                break;
-                            case 2:
-                                matriz[posicao], [1] = prompt("Digite o nome correto")
-                                break;
-                            case 3:
-                                cadastrarNotas(matricula)
-                                break;
-                            default:
-                                alert("O número informado é inválido, escolha outro valor")
-                                break;
-                        }
-                    }
-                }
-            }
-        }
 
-        //Maria
-        function cadastrarNotas(matricula) {
-            let posicao
-            if (alunoCadastrado(matricula)) {
-                for (let j = 1; j < 4; j++) {
-                    if (matriz[j][0] == matricula) {
-                        posicao = j
+                encerrarMenuEditar:
+                while (true) {
+                    let indice = +prompt(`Informe o valor do índice para editar as informações do aluno:\n\n1) Número de matrícula;\n2) Nome do aluno;\n3) Notas do aluno;\n0) Sair;`)
+
+                    encerrarSwitch:
+                    switch (indice) {
+                        case 0:
+                            break encerrarMenuEditar;
+                        case 1:
+                            while (true) {
+                                matricula = String(prompt("Informe o novo número de matrícula:"))
+                                if (!isNaN(matricula)) {
+                                    matriz[posicao][0] = matricula
+                                    break encerrarSwitch;
+                                } else {
+                                    alert("Deve ser informado um número válido para a matrícula.\nDigite outro valor!")
+                                }
+                            }
+                        case 2:
+                            matriz[posicao][1] = String(prompt("Informe o novo nome do aluno:"))
+                            break;
+                        case 3:
+                            if (matriz[posicao][2] != "--") {
+                                cadastrarNotas(matricula, index);
+                            } else {
+                                alert("Não é possível editar as notas sem tê-las cadastrado antes!")
+                                break encerrarSwitch;
+                            }
+                            break;
+                        default:
+                            alert("O número informado é inválido. Digite outro valor!")
+                            break;
                     }
                 }
-                let notas = []
-                for (let i = 0; i < 3; i++) {
-                    notas[i] = +prompt(`Informe a ${i + 1}º nota:`)
-                    matriz[posicao][i + 2] = notas[i]
-                }
-                calcularMedia(notas, posicao)
                 return;
             } else {
-                alert("O Aluno não está cadastrado.\nÉ preciso cadastrar o aluno para informar as notas!")
-                return;
+                let resultado = confirm("Não é possível editar as informações, pois a matrícula não consta no sistema.\nDeseja cadastrar um novo aluno?")
+                if (resultado) {
+                    return cadastrarAluno(index);
+                }
+                return false;
             }
         }
 
+        /**
+         * Cadastra as notas de um aluno com base no número de matrícula informado como parâmetro.
+         * 
+         * @param {String} matricula - Representa o número de matrícula a ser buscado na matriz.
+         * @param {Number} index - Informa o número total de alunos armazenados na matriz.
+         */
+        function cadastrarNotas(matricula, index) {
+            if (alunoCadastrado(matricula, index)) {
+                let posicao
+                let notas = []
+
+                for (let i = 0; i < index; i++) {
+                    if (matriz[i][0] === matricula) {
+                        posicao = i
+                    }
+                }
+                for (let i = 0; i < 3; i++) {
+                    notas[i] = +prompt(`Cadastro de Notas:\nInforme a ${i + 1}ª nota:`)
+                    matriz[posicao][i + 2] = notas[i];
+                }
+
+                calcularMedia(notas, posicao);
+                return false;
+            } else {
+                let resultado = confirm("O número de matrícula informado não consta no sistema.\nDeseja cadastrar um novo aluno?")
+                if (resultado) {
+                    return cadastrarAluno(index);
+                }
+                return false;
+            }
+        }
+
+        /**
+         * Calcula a média com base no vetor de notas.
+         * 
+         * @param {Number} notas - Notas a serem somadas para o cálculo da média.
+         * @param {Number} posicao - Representa a linha em que será armazenada a média.
+         */
         function calcularMedia(notas, posicao) {
             let soma = 0
+
             for (let i = 0; i < notas.length; i++) {
                 soma += notas[i]
             }
-            let media = soma / notas.length
-            matriz[posicao][5] = media 
-            return 
+
+            let media = soma / notas.length;
+            matriz[posicao][5] = media.toFixed(2);
+            return;
         }
     </script>
 </body>

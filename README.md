@@ -7,3 +7,11 @@ Consiste em um cadastro de notas e alunos, que contém:
   - Menu para cadastrar alunos e notas, editar informações e listar os alunos;
   - Cada aluno tem um número de matrícula, nome, três notas a serem informadas e o cálculo automático da média;
   - Demais verificações dos cadastros.
+
+Trabalho realizado por:
+
+  - Bárbara Alessandra Maas;
+  - Maria Alice Mattos;
+  - Maycon Alves Coelho;
+  - Vitor Hoe Souza;
+  - Yasmin Gabriele Xavier.
